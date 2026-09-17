@@ -1,0 +1,7 @@
+flowchart LR
+  S1["01 入口<br/>内容 → Mermaid（可选）<br/>询问主题模式<br/>读取 Mermaid 源码"] --> S2["02 语义与基线<br/>sourceModel 内容清单<br/>Mermaid 原始布局<br/>baselineModel / rank"]
+  S2 --> S3["03 卡片与锚点<br/>Constraint IR<br/>计算 rank 与锚点<br/>测量文字 → 动态卡片"]
+  S3 --> S4["04 通道与路由<br/>预留端口 / 独立 lane<br/>声明对称与 publicSpine<br/>复杂图生成 ≥2 候选"]
+  S4 --> S5["05 硬门禁与选优<br/>过滤穿卡 / 交叉 / 反向入边<br/>视觉风险评分<br/>选优正交路线"]
+  S5 --> S6["06 渲染与全景验收<br/>标签底牌 → SVG<br/>内容 / rank / 端点法向<br/>几何 / 对称 / 风险 / 全路径"]
+  S6 --> S7["07 回归与发布<br/>自动发现全部 SVG<br/>生成预览 → 用户逐图确认<br/>更新正文与交互页"]

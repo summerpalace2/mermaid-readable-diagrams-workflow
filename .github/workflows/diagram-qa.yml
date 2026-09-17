@@ -20,5 +20,7 @@ jobs:
           package-manager-cache: false
       - name: Render deterministic examples
         run: npm run render -- warm
+      - name: Render workflow demo themes
+        run: npm run render:demo -- all
       - name: Run structural and geometry QA
         run: npm run qa

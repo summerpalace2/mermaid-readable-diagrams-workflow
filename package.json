@@ -1,6 +1,6 @@
 {
   "name": "mermaid-readable-diagrams-workflow",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "A deterministic, QA-first workflow for turning Mermaid technical diagrams into readable SVGs.",
   "license": "MIT",
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "render": "node src/render-kmp-core-previews.js",
+    "render:demo": "node src/render-workflow-overview.js",
     "qa": "node src/qa-kmp-core-previews.js",
-    "check": "npm run render -- warm && npm run qa"
+    "check": "npm run render -- warm && npm run render:demo -- all && npm run qa"
   }
 }

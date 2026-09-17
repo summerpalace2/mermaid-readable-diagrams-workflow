@@ -2,6 +2,8 @@
 
 这是一个面向技术文章、学习笔记和架构文档的 Mermaid 流程图排版工作流。
 
+它支持两种使用入口：已有 Mermaid 源码时直接进入确定性排版；只有文章或知识点时，先由人工或 LLM 整理成 Mermaid，再进入同一条排版与验收链。当前仓库的 CLI 从 `.mmd` 开始，不会擅自替用户生成技术语义。
+
 它解决的不是“能不能画出 Mermaid”，而是 Mermaid 图在真实文章中经常出现的可读性问题：卡片留白不协调、文字过小、箭头方向错误、线路打结、对称分支失衡、范围框越界，以及局部看起来正确但全景难以理解。
 
 ## 它做什么
@@ -10,7 +12,8 @@
 
 ```mermaid
 flowchart LR
-    Source[Mermaid 源码] --> Model[sourceModel 内容模型]
+    Content[文章 / 知识点（可选）] -.人工或 LLM 整理.-> Source[Mermaid 源码]
+    Source --> Model[sourceModel 内容模型]
     Model --> Baseline[Mermaid baselineModel]
     Baseline --> Measure[文字测量与动态卡片]
     Measure --> IR[Constraint IR 约束中间表示]
@@ -20,6 +23,47 @@ flowchart LR
     QA --> Preview[全景预览与用户确认]
     Preview --> Article[文章或文档发布]
 ```
+
+## 工作流成品演示
+
+下面这张图就是用本仓库工作流生成的演示图。它把完整流水线压缩成七个连续阶段，卡片内保留关键子步骤；节点、箭头、字号、间距和主题都由确定性 SVG 渲染器生成。
+
+![工作流成品演示图](examples/output/kmp-core-preview-00-workflow-overview-paper.svg)
+
+主题只改变视觉层，不改变内容和几何。仓库同时提供四套同尺寸主题预览：
+
+| 主题 | 预览 |
+|---|---|
+| `paper` | [打开 paper 主题](examples/output/kmp-core-preview-00-workflow-overview-paper.svg) |
+| `mint` | [打开 mint 主题](examples/output/kmp-core-preview-00-workflow-overview-mint.svg) |
+| `warm` | [打开 warm 主题](examples/output/kmp-core-preview-00-workflow-overview-warm.svg) |
+| `mist` | [打开 mist 主题](examples/output/kmp-core-preview-00-workflow-overview-mist.svg) |
+
+## 怎么调用
+
+### 1. 直接排版已有 Mermaid
+
+```powershell
+# 使用固定主题
+npm run render -- warm
+
+# 当前批次随机抽取一次主题，并在日志中输出实际主题
+npm run render -- random
+
+# 独立生成工作流演示图的四套主题
+npm run render:demo -- all
+
+# 全量渲染、演示图生成和 QA
+npm run check
+```
+
+### 2. 从文章内容进入
+
+先把文章中的一个知识点整理为 `.mmd`，保存到 `examples/mermaid/`，再执行上面的渲染命令。建议遵循：
+
+`内容拆解 → Mermaid 草稿 → 节点/边/方向核对 → 主题选择 → 渲染与 QA`
+
+这一步可以由 LLM 协助，但必须由人确认技术语义；图片模型不能直接决定精确节点、箭头关系或线路端点。
 
 ## 为什么需要它
 
@@ -43,16 +87,17 @@ flowchart LR
 
 ## 推荐执行顺序
 
-1. 读取 Mermaid 源码并建立内容清单。
-2. 生成或读取可信的 Mermaid baseline。
-3. 判断流程类型：线性、分支、闭环、时序或分层架构。
-4. 依照 baseline 的 rank 和出口顺序建立布局草图。
-5. 测量文字并动态计算卡片宽高、换行和间距。
-6. 建立 Constraint IR，声明端口、独立 lane、避让区域和对称关系。
-7. 生成正交路线，优先使用独立通道；严格镜像且适合时才使用 `publicSpine`。
-8. 运行渲染前硬校验：端点、法向、穿卡、交叉、非法共享、范围框和箭头规格。
-9. 运行全量 QA：自动发现所有成品 SVG，并输出具体风险边对和数值。
-10. 查看缩放后的全景图，用户逐图确认后再替换文章资源。
+1. （可选）把文章或知识点整理为 Mermaid 草稿。
+2. 询问主题模式，再读取 Mermaid 源码并建立内容清单。
+3. 生成或读取可信的 Mermaid baseline。
+4. 判断流程类型：线性、分支、闭环、时序或分层架构。
+5. 依照 baseline 的 rank 和出口顺序建立布局草图。
+6. 测量文字并动态计算卡片宽高、换行和间距。
+7. 建立 Constraint IR，声明端口、独立 lane、避让区域和对称关系。
+8. 生成正交路线，复杂图保留候选方案；严格镜像且适合时才使用 `publicSpine`。
+9. 运行渲染前硬校验：端点、法向、穿卡、交叉、非法共享、范围框和箭头规格。
+10. 放置标签底牌，生成带元数据的 SVG，并运行全量 QA。
+11. 查看缩放后的全景图，用户逐图确认后再替换文章资源。
 
 ## 硬门禁与视觉警告
 

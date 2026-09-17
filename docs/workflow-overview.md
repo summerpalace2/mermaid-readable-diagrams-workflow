@@ -2,6 +2,16 @@
 
 本项目把流程图生成拆成“语义、基线、测量、布局、视觉、验收”六个阶段。六层之间有明确的责任边界：
 
+![完整工作流演示图](../examples/output/kmp-core-preview-00-workflow-overview-paper.svg)
+
+## 两种入口
+
+如果输入是文章或知识点，先经过一个可选的内容建模入口：
+
+`文章 / 知识点 → Mermaid 草稿 → 人工核对节点、边和方向`
+
+如果输入已经是 Mermaid，则跳过这一步。当前仓库的参考 CLI 从 `.mmd` 开始；“内容生成 Mermaid”可以由人工或 LLM 协助，但不是当前 CLI 的自动能力。
+
 ```text
 Mermaid 语义
     ↓
@@ -15,6 +25,29 @@ Constraint IR：rank / port / lane / symmetry / avoid
     ↓
 渲染前硬校验 + 全量 QA + 全景人工确认
 ```
+
+## 完整流水线映射
+
+公开演示图将完整流水线压缩成七张卡片，实际含义如下：
+
+| 阶段 | 图中内容 | 对应规则 |
+|---|---|---|
+| 01 入口 | 内容→Mermaid（可选）、主题模式、读取源码 | 明确输入和主题，不跳过语义源 |
+| 02 语义与基线 | `sourceModel`、Mermaid 原始布局、`baselineModel` / `rank` | Mermaid 决定连接关系和层级骨架 |
+| 03 卡片与锚点 | `Constraint IR`、`rank`、锚点、文字测量、动态卡片 | 先测量，再计算卡片和通道 |
+| 04 通道与路由 | 端口、独立 `lane`、`symmetrySpec`、`publicSpine`、候选路线 | 复杂图至少保留两个候选，简单图保留可解释回退 |
+| 05 硬门禁与选优 | 穿卡、交叉、反向入边过滤，视觉风险评分 | 先硬约束过滤，再选优路线 |
+| 06 渲染与验收 | 标签底牌、SVG 元数据、内容/rank/端点/几何/对称/风险/全路径 | 结构验收和视觉风险验收同时进行 |
+| 07 回归与发布 | 自动发现全部 SVG、预览、逐图确认、更新正文和交互页 | 未确认前不批量替换正文资源 |
+
+演示源文件位于 [`examples/mermaid/workflow-overview.mmd`](../examples/mermaid/workflow-overview.mmd)，生成命令为：
+
+```powershell
+npm run render:demo -- all
+npm run qa
+```
+
+演示图使用内联 `baselineModel` 保持仓库零依赖；真实项目如果使用 Mermaid CLI，应将 CLI 原始渲染快照保存为 `examples/baseline/`，再让具体渲染器读取它。
 
 Mermaid 决定“谁连接谁”，布局代码决定“怎样连接更容易读”。如果同一张图无法同时满足语义、几何安全和可读性，应拆图或调整 Mermaid 分区，不应继续叠加线路。
 
