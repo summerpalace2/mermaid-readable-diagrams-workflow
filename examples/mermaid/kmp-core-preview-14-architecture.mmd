@@ -1,0 +1,10 @@
+flowchart TD
+    AndroidApp[androidApp：Compose + Android 生命周期] --> VM[Shared ViewModel / UiState：可选共享]
+    IOSApp[iosApp：SwiftUI + Swift 生命周期] --> VM
+    VM --> UseCase[UseCase / 业务规则]
+    UseCase --> RepoContract[Repository 接口]
+    RepoContract --> RepoImpl[RepositoryImpl：刷新 / 缓存 / 回退 / SSOT]
+    RepoImpl --> Remote[RemoteDataSource]
+    RepoImpl --> Local[LocalDataSource]
+    MapContract[MapNavigator 接口] --> AndroidMain[androidMain：AMapNavigator / Android 引擎]
+    MapContract --> IosMain[iosMain：MapKitNavigator / Darwin 引擎]

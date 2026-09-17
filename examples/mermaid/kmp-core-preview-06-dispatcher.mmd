@@ -1,0 +1,12 @@
+flowchart TD
+    subgraph DecisionChain[Dispatcher 选择链]
+        direction TD
+        Work[这段工作是什么?] --> UI{需要更新 UI 或主线程 API?}
+        UI -- 否 --> CPU{CPU-heavy?}
+        CPU -- 否 --> Block{会阻塞线程?}
+        Block -- 否 --> Caller[保持当前上下文 / 遵循库契约]
+    end
+
+    UI -- 是 --> Main[Main]
+    CPU -- 是 --> Default[Default]
+    Block -- 是 --> IO[IO]

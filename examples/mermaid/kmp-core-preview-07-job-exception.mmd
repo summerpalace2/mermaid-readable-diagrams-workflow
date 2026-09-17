@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph Normal[普通 Parent Job]
+        direction TB
+        P[普通 Parent Job] --> A[Child async A]
+        P --> B[Child launch B]
+        A --> AF[A 执行失败]
+        AF --> D[异常保存在 Deferred]
+        D --> Await["调用 await()"]
+        Await --> Throw[异常重新抛出]
+        Throw --> PF[未捕获：Parent scope 失败]
+        PF --> Cancel[B 被取消]
+    end
+
+    subgraph Supervisor[supervisorScope]
+        direction TB
+        S[supervisorScope] --> SA[Child async A]
+        S --> SB[Child launch B]
+        SA --> SD[A 失败：先不自动取消 B]
+        SD --> SAwait["await() 后由调用方决定是否捕获"]
+        SAwait --> SFail[未捕获：scope 仍会失败]
+        SAwait --> SHandle[捕获并处理：B 可继续]
+    end

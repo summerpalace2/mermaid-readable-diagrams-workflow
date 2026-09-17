@@ -1,0 +1,20 @@
+flowchart LR
+    subgraph ReadLoop[读取闭环]
+        direction LR
+        UI[UI 观察 Local Flow] --> Local[本地缓存 / 数据库]
+        Local --> State[UseCase / ViewModel 映射 UiState]
+        State --> UI
+    end
+
+    subgraph RefreshLoop[刷新链与失败回退]
+        direction LR
+        Refresh[用户刷新] --> Repo[Repository]
+        Repo --> Remote[RemoteDataSource]
+        Remote --> OK{请求成功?}
+        OK -- 是 --> Save[保存 DTO → Entity]
+        OK -- 否 --> Cache{本地有可用缓存?}
+        Cache -- 无 --> Error[统一 Error / Empty 状态]
+    end
+
+    Save --> Local
+    Cache -- 有 --> Local

@@ -1,0 +1,11 @@
+flowchart LR
+    A[业务与平台现状] --> B[共享收益是否高于差异成本?]
+    B -- 否 --> C[保留平台实现]
+    B -- 是 --> D[抽取稳定的共享能力]
+    D --> E[commonMain / commonTest]
+    E --> F[Android Target 编译]
+    E --> G[iOS Target 编译]
+    F --> H[androidApp + Compose 或原生 UI]
+    G --> I[iosApp + SwiftUI 或 CMP]
+    C --> H
+    C --> I

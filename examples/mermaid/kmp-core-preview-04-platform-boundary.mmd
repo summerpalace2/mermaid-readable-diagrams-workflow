@@ -1,0 +1,8 @@
+flowchart TD
+    Start[发现平台差异] --> Lib{是否已有成熟 KMP Library?}
+    Lib -- 是 --> Common[优先使用 common API]
+    Lib -- 否 --> Simple{差异是否简单、稳定、固定一实现?}
+    Simple -- 是 --> EA[expect/actual 或 expect factory]
+    Simple -- 否 --> Contract[定义 interface]
+    Contract --> Inject[平台 Composition Root 注入实现]
+    Inject --> Fake[commonTest 可注入 Fake]

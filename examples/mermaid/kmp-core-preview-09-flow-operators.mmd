@@ -1,0 +1,27 @@
+flowchart LR
+    Input[数据连续产生] --> Every{每个值都必须处理?}
+
+    subgraph Preserve[每个值都要保留]
+        direction TB
+        Slow{消费者可能变慢?}
+        Buffer[buffer：排队保留]
+        Collect[collect：按顺序处理]
+        Slow -- 是 --> Buffer
+        Slow -- 否 --> Collect
+    end
+
+    subgraph LatestPath[只关心最新值]
+        direction TB
+        Latest{只关心最新状态?}
+        Conflate[conflate：当前继续，中间值可丢]
+        LatestWork{旧的处理也应取消?}
+        CollectLatest[collectLatest：取消旧下游处理]
+        FlatLatest[flatMapLatest：取消旧 inner Flow / 数据源]
+        Latest -- 是 --> Conflate
+        Latest -- 否 --> LatestWork
+        LatestWork -- 是 --> CollectLatest
+        LatestWork -- 否 --> FlatLatest
+    end
+
+    Every -- 是 --> Slow
+    Every -- 否 --> Latest

@@ -1,0 +1,20 @@
+flowchart LR
+    K[Kotlin/Native] --> B[Kotlin / Swift<br/>互操作边界]
+
+    subgraph Prefer[建议优先]
+        P1[粗粒度 API]
+        P2[稳定模型]
+        P3[后台 CPU]
+    end
+
+    subgraph Watch[重点关注]
+        W1[大量微小调用]
+        W2[大对象转换]
+        W3[主线程工作]
+    end
+
+    B --> P1
+    B --> P2
+    B --> P3
+    K --> M[真实测量：启动、包体、跨语言调用次数]
+    W3 --> M

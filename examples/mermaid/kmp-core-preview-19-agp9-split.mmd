@@ -1,0 +1,22 @@
+flowchart LR
+    Legacy[旧 composeApp：KMP + Android App] --> Split[按职责拆分]
+    Split --> Shared[shared：KMP library]
+
+    subgraph Android[Android Application]
+        direction LR
+        AndroidArtifact[shared Android<br/>artifact]
+        AAR[AAR]
+        AndroidApp[androidApp<br/>应用模块]
+        AndroidArtifact --> AAR
+        AAR --> AndroidApp
+    end
+
+    subgraph IOS[iOS 应用集成]
+        direction LR
+        Framework[shared Framework<br/>/ XCFramework]
+        IOSApp[iosApp<br/>SwiftUI / Xcode target]
+        Framework --> IOSApp
+    end
+
+    Shared --> AndroidArtifact
+    Shared --> Framework

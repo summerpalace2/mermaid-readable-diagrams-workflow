@@ -1,0 +1,9 @@
+flowchart TD
+    Audit[审计边界] --> Split[先拆平台耦合]
+    Split --> Model[稳定 Model]
+    Model --> Rules[算法 / 业务规则]
+    Rules --> Domain[Domain / UseCase]
+    Domain --> Repo[Repository 策略]
+    Repo --> Network[网络 / 数据库]
+    Network --> Shared[共享状态 / ViewModel]
+    Shared --> UI[UI：最后评估，非必选]

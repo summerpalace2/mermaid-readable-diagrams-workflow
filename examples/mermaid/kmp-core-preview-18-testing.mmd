@@ -1,0 +1,20 @@
+flowchart TB
+    subgraph Fast[快速、隔离、易定位]
+        direction LR
+        Rules[业务规则与状态转换]
+        Common[commonTest：Fake + TestDispatcher]
+        Platform[平台适配测试：SDK / callback / driver]
+        Rules --> Common
+        Common --> Platform
+    end
+
+    subgraph Real[更真实、接近发布]
+        direction LR
+        Integration[Android / iOS 集成测试]
+        Smoke[AAR / Framework / XCFramework 冒烟测试]
+        CI[CI 构建、安装与关键路径验证]
+        Integration --> Smoke
+        Smoke --> CI
+    end
+
+    Platform --> Integration

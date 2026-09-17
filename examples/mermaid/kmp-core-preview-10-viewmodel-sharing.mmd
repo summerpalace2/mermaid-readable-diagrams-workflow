@@ -1,0 +1,8 @@
+flowchart TD
+    UI[两端 UI 不同] --> Logic{展示逻辑是否基本一致?}
+    Logic -- 否 --> Native[保留平台各自 ViewModel]
+    Logic -- 是 --> Cost{互操作与生命周期成本可接受?}
+    Cost -- 否 --> Native
+    Cost -- 是 --> Shared[共享 commonMain Presentation + StateFlow]
+    Shared --> Compose[Android Compose 消费]
+    Shared --> Swift[SwiftUI 通过 bridge 消费]

@@ -1,0 +1,6 @@
+flowchart LR
+    Rules[业务规则与状态转换] --> Common[commonTest：Fake + TestDispatcher]
+    Common --> Platform[平台适配测试：SDK / callback / driver]
+    Platform --> Integration[Android / iOS 集成测试]
+    Integration --> Smoke[AAR / Framework / XCFramework smoke test]
+    Smoke --> CI[CI 构建、安装与关键路径验证]

@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant Swift as SwiftUI Task
+    participant Bridge as Bridge / AsyncSequence
+    participant Kotlin as Kotlin suspend / Flow
+    participant Repo as Repository
+    Swift->>Bridge: 开始 for await / 订阅
+    Bridge->>Kotlin: collect 或调用 suspend
+    Kotlin->>Repo: fetch / observe
+    Repo-->>Kotlin: 返回 value
+    Kotlin-->>Bridge: emit state
+    Bridge-->>Swift: 更新 Swift 状态
+    Swift->>Bridge: Task 取消
+    Bridge->>Kotlin: 取消 collector / Job

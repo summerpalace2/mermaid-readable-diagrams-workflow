@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant UI as Compose / SwiftUI
+    participant VM as ViewModel
+    participant SF as StateFlow
+    participant UP as Upstream Flow
+
+    UI->>SF: 订阅
+    SF->>UP: 首个订阅者出现，开始收集
+    UP-->>SF: 发射状态
+    SF-->>UI: 当前状态
+    UI->>SF: 页面离开，取消收集
+    SF->>SF: subscriber = 0
+    SF->>SF: WhileSubscribed 等待 stopTimeout
+    SF->>UP: 超时后停止上游收集
+    UI->>SF: 页面回来，重新订阅
+    SF-->>UI: 先返回最后一个值
+    SF->>UP: 重新开始上游收集

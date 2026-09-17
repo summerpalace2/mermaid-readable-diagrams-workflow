@@ -1,0 +1,8 @@
+flowchart LR
+    M[Gradle Module] --> T{选择 Target}
+    T --> A[Android Target]
+    T --> I[iOS Targets]
+    A --> AS[commonMain + androidMain]
+    I --> IS[commonMain + iosMain + Target 专属 Main]
+    AS --> AB[Android Library / AAR]
+    IS --> IF[Kotlin/Native Framework / XCFramework]

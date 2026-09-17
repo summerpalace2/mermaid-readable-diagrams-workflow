@@ -1,0 +1,23 @@
+name: Diagram QA
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Render deterministic examples
+        run: npm run render -- warm
+      - name: Run structural and geometry QA
+        run: npm run qa

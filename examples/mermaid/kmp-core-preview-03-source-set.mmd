@@ -1,0 +1,8 @@
+flowchart TB
+    C[commonMain<br/>所有 Target 共享]
+    C --> A[androidMain<br/>Android 专属]
+    C --> N[nativeMain<br/>Native Target 共享]
+    N --> AP[appleMain<br/>Apple Target 共享]
+    AP --> IOS[iosMain<br/>iOS Target 共享]
+    IOS --> ARM[iosArm64Main]
+    IOS --> SIM[iosSimulatorArm64Main]

@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant User as 用户
+    participant UI as Compose / SwiftUI
+    participant VM as TripViewModel
+    participant UseCase as GenerateTripUseCase
+    participant Repo as TripRepositoryImpl
+    participant Remote as RemoteDataSource
+    participant Local as LocalDataSource
+    participant State as StateFlow
+    User->>UI: 点击生成行程
+    UI->>VM: onGenerate(preference)
+    VM->>UseCase: 执行业务规则与算法
+    UseCase->>Repo: 刷新 / 观察
+    Repo->>Remote: 请求远程行程
+    Remote-->>Repo: TripDto 或错误
+    Repo->>Local: 成功后写入本地
+    Local->>State: 发射最新 TripEntity
+    State-->>VM: 更新 TripUiState
+    VM-->>UI: Compose / SwiftUI 重绘
